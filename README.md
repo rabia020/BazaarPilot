@@ -706,11 +706,8 @@ BazaarPilot is designed for deployment on **Streamlit Community Cloud**.
 
 ### Live Application
 
-Add the deployed Streamlit URL here:
 
-```text
-YOUR_STREAMLIT_APP_URL
-```
+[Try BazaarPilot Live](https://bazaarpilot-eq72zge9ufrrbvkfmenyrl.streamlit.app/)
 
 ### GitHub Repository
 
