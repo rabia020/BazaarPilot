@@ -260,34 +260,24 @@ Sensitive configuration files are excluded using `.gitignore`.
 
 ---
 
-# Agentic Architecture
+## Agentic Architecture
 
-BazaarPilot uses a **LangGraph Supervisor-Router architecture**.
-
-The supervisor determines which specialized agent should handle the user's question. Each agent performs analysis using the actual dataset before passing verified results to the shared Insight Agent.
+BazaarPilot uses a **LangGraph supervisor-router** pattern: one classification step decides which specialist agent handles the question, and every path converges on a shared visualization + insight-narration stage so behavior (multilingual output, "no invented numbers") stays consistent across all agents.
 
 ```mermaid
 flowchart TD
-
-    U([User]) -->|Upload CSV / Excel| LOAD[Data Loader & Profiler]
-
+    U([User]) -->|Upload CSV / Excel| LOAD[Data Loader &<br/>Profiler]
     LOAD --> DASH[Business Dashboard<br/>KPIs · Trends · Alerts]
-
     LOAD --> DUCK[(DuckDB<br/>'sales' table)]
 
-    U -->|Ask Question<br/>English / Roman Urdu / Urdu| SUP{Supervisor / Router}
+    U -->|Ask a question<br/>EN / Roman Urdu / Urdu| SUP{Supervisor / Router}
 
-    SUP -->|analytics| SQL[SQL / Data Analyst Agent<br/>NL → SQL → Validate → Execute]
-
-    SUP -->|profit| PROFIT[Profit Agent<br/>Ranking / Period Comparison]
-
-    SUP -->|inventory| INV[Inventory Agent<br/>Stockout Prediction / Reorder]
-
-    SUP -->|anomaly| ANOM[Anomaly Agent<br/>Recent vs Baseline + Severity]
-
-    SUP -->|recommendation| REC[Recommendation Agent<br/>Velocity + Inventory + Margin]
-
-    SUP -->|general| GEN[Business Insight Agent<br/>General Analysis]
+    SUP -->|analytics| SQL[SQL / Data Analyst Agent<br/>NL → SQL → validate → execute]
+    SUP -->|profit| PROFIT[Profit Agent<br/>ranking OR period-over-period<br/>'why' comparison]
+    SUP -->|inventory| INV[Inventory Agent<br/>stockout prediction<br/>reorder quantity]
+    SUP -->|anomaly| ANOM[Anomaly Agent<br/>recent vs baseline<br/>+ severity]
+    SUP -->|recommendation| REC[Recommendation Agent<br/>velocity + inventory + margin]
+    SUP -->|general| GEN[Business Insight Agent<br/>general analysis]
 
     SQL --> DUCK
     PROFIT --> DUCK
@@ -302,41 +292,18 @@ flowchart TD
     REC --> VIZ
     GEN --> VIZ
 
-    VIZ --> INSIGHT[Insight Agent<br/>Narrates Verified Results<br/>English / Roman Urdu / Urdu]
+    VIZ --> INSIGHT[Insight Agent<br/>LLM narrates ONLY verified rows<br/>+ language detection EN/Roman/Urdu]
 
-    INSIGHT --> REC_UI{Recommendation<br/>is an Action?}
-
-    REC_UI -->|Yes| APPROVAL[Human Approval<br/>Approve / Reject]
-
+    INSIGHT --> REC_UI{Recommendation<br/>is an action?}
+    REC_UI -->|yes| APPROVAL[Human Approval<br/>Approve / Reject]
     APPROVAL --> LOG[(Activity Log)]
-
-    REC_UI -->|No| ANSWER([Answer shown in Chat])
-
+    REC_UI -->|no| ANSWER([Answer shown in chat])
     INSIGHT --> ANSWER
-```
 
-## Why This Architecture?
-
-The supervisor provides a single, debuggable routing point rather than a collection of uncontrolled autonomous agents.
-
-Specialized agents return **computed results**, not fabricated natural-language answers.
-
-For example:
-
-```text
-User Question
-      ↓
-Supervisor
-      ↓
-Specialized Agent
-      ↓
-DuckDB / Pandas
-      ↓
-Verified Results
-      ↓
-Insight Agent
-      ↓
-English / Roman Urdu / Urdu Answer
+    style SUP fill:#4f46e5,color:#fff
+    style DUCK fill:#f59e0b,color:#111
+    style INSIGHT fill:#10b981,color:#fff
+    style APPROVAL fill:#ef4444,color:#fff
 ```
 
 This separation makes the **"no invented numbers"** principle enforceable at the architecture level rather than relying only on an LLM prompt.
@@ -794,7 +761,6 @@ https://github.com/rabia020/BazaarPilot
 
 ---
 
-# Author
 
 Built for:
 
