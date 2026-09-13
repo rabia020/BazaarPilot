@@ -74,3 +74,30 @@ def plot_scatter(
         title=f"{y_column} vs {x_column}",
     )
     return fig
+
+def _clean_layout(fig: go.Figure, title: str) -> go.Figure:
+    fig.update_layout(
+        title=title,
+        margin=dict(l=10, r=10, t=50, b=10),
+        paper_bgcolor="rgba(0,0,0,0)",
+        plot_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#10131a"),
+    )
+    return fig
+
+
+def plot_metric_over_time(df: pd.DataFrame, x: str, y: str, title: str) -> go.Figure:
+    fig = px.line(df, x=x, y=y, markers=True, title=title)
+    return _clean_layout(fig, title)
+
+
+def plot_top_products_bar(df: pd.DataFrame, metric: str, title: str) -> go.Figure:
+    fig = px.bar(df, x="product", y=metric, title=title)
+    fig.update_layout(xaxis_tickangle=-30)
+    return _clean_layout(fig, title)
+
+
+def plot_category_bar(df: pd.DataFrame, metric: str, title: str) -> go.Figure:
+    fig = px.bar(df, x="category", y=metric, title=title)
+    fig.update_layout(xaxis_tickangle=-20)
+    return _clean_layout(fig, title)
