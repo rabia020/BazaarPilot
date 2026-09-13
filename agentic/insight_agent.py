@@ -1,5 +1,6 @@
 import re
 from .llm import ask_llm
+from app.i18n import translate_products_in_text
 
 MAX_ROWS = 25
 
@@ -19,7 +20,11 @@ ROMAN_URDU_WORDS = {
 ENGLISH_AMBIGUOUS_WORDS = {"profit", "shop", "sales", "revenue", "stock", "category", "product"}
 
 
-def _detect_script(question: str) -> str:
+def _detect_script(question: str, ui_lang: str = "en") -> str:
+    # UI language wins when set to Urdu — the app should never answer in
+    # English while the whole interface is displayed in Urdu.
+    if ui_lang == "ur":
+        return "urdu_script"
     if any("\u0600" <= ch <= "\u06FF" for ch in question):
         return "urdu_script"
     words = set(re.findall(r"[a-zA-Z]+", question.lower()))
@@ -58,9 +63,19 @@ def _render_answer(raw: str, script: str) -> str:
 
     urdu_parts = []
     if "###URDU_ANSWER###" in sections:
-        urdu_parts.append(sections["###URDU_ANSWER###"])
+        urdu_parts.append(
+            translate_products_in_text(
+                sections["###URDU_ANSWER###"]
+            )
+        )
+
     if "###URDU_RECOMMENDATION###" in sections:
-        urdu_parts.append(f"<strong>تجویز:</strong> {sections['###URDU_RECOMMENDATION###']}")
+        urdu_parts.append(
+            f"<strong>تجویز:</strong> "
+            f"{translate_products_in_text(
+                sections['###URDU_RECOMMENDATION###']
+            )}"
+        )
 
     if urdu_parts:
         urdu_html = (
@@ -98,7 +113,8 @@ def insight_node(state):
         )
         return {"insights": text, "final_answer": text}
 
-    script = _detect_script(question)
+    ui_lang = state.get("ui_lang", "en")
+    script = _detect_script(question, ui_lang)
 
     if script == "english":
         format_instructions = f'''Reply in English only. Use exactly this format, with each marker on its own line:

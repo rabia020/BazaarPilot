@@ -4,6 +4,7 @@ class AgentState(TypedDict, total=False):
     _df: Any  # the raw uploaded pandas DataFrame; must be declared here or
               # LangGraph drops it, since it only tracks fields in this schema
     question: str
+    ui_lang: str
     dataset_name: str
     columns: list[str]
     column_types: dict[str, str]

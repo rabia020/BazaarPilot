@@ -163,15 +163,44 @@ BazaarPilot never lets the AI take a real action. Every reorder or business reco
 
 *(Add screenshots of the Overview dashboard, AI Analyst chat with generated SQL, Inventory tab, and Approvals tab here before submission.)*
 
-```
-assets/
-  ├── screenshot_dashboard.png
-  ├── screenshot_ai_analyst.png
-  ├── screenshot_inventory.png
-  └── screenshot_approvals.png
-```
+### Overview Dashboard
+English Version:
+![BazaarPilot Overview Dashboard](docs/screenshots/dashboard.png)
+![BazaarPilot Overview Dashboard](docs/screenshots/dashboard_charts.png)
 
----
+Urdu Version:
+![BazaarPilot Overview Dashboard](docs/screenshots/dashboard_urdu.png)
+
+### AI Analyst
+
+AI-powered business analysis with natural-language questions and generated SQL.
+English Version:
+![BazaarPilot AI Analyst](docs/screenshots/ai_analyst_revenue.png)
+![BazaarPilot AI Analyst](docs/screenshots/ai_analyst_revenue_rec.png)
+
+Urdu Version:
+![BazaarPilot AI Analyst](docs/screenshots/ai_analyst_revenue_urdu.png)
+![BazaarPilot AI Analyst](docs/screenshots/ai_analyst_revenue_re_urdu.png)
+
+### Inventory Analysis
+
+Inventory risk analysis and reorder recommendations.
+English Version:
+![BazaarPilot Inventory](docs/screenshots/inventory.png)
+
+Urdu Version:
+![BazaarPilot Approvals](docs/screenshots/inventory_urdu.png)
+
+### Approvals
+
+Human-in-the-loop approval for recommended business actions.
+English Version:
+
+![BazaarPilot Approvals](docs/screenshots/approvals.png)
+![BazaarPilot Approvals](docs/screenshots/activity_log.png)
+
+Urdu Version:
+![BazaarPilot Approvals](docs/screenshots/approvals_urdu.png)
 
 ## Installation
 
@@ -206,7 +235,7 @@ Then open the local URL Streamlit prints (usually `http://localhost:8501`), clic
 Deployed on Streamlit Community Cloud.
 
 **Live app:** `<add your public Streamlit URL here>`
-**Repository:** `<add your GitHub repo URL here>`
+**Repository:** [`<add your GitHub repo URL here>`](https://github.com/rabia020/BazaarPilot)
 
 ---
 
@@ -230,7 +259,7 @@ Deployed on Streamlit Community Cloud.
 
 ## Author
 
-Built for [Hackathon Name] by [Your Name].
+Built for HEC-NCEAC & PEC Generative & Agentic AI Training — Cohort 11 | Midterm — Hackathon 1 by Rabia Haq.
 
 ---
 

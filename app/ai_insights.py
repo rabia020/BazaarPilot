@@ -11,6 +11,7 @@ import os
 import pandas as pd
 from groq import Groq
 from dotenv import load_dotenv
+from i18n import translate_products_in_text
 
 load_dotenv()
 
@@ -22,6 +23,17 @@ def _get_client() -> Groq:
     if not api_key:
         raise RuntimeError("GROQ_API_KEY is not set. Add it to your .env file.")
     return Groq(api_key=api_key)
+
+
+def _language_instruction(ui_lang: str) -> str:
+    if ui_lang == "ur":
+        return (
+            "\n\nIMPORTANT: Write your ENTIRE response in proper Urdu script "
+            "(اردو رسم الخط) only. Do not use English or Roman Urdu anywhere, "
+            "except for numbers, product names, or column names that only exist "
+            "in Latin script in the data — keep those as-is."
+        )
+    return ""
 
 
 def _ask(system_prompt: str, user_prompt: str) -> str:
@@ -37,7 +49,9 @@ def _ask(system_prompt: str, user_prompt: str) -> str:
     return response.choices[0].message.content.strip()
 
 
-def generate_executive_summary(profile_stats: dict, column_profile_df: pd.DataFrame) -> str:
+def generate_executive_summary(
+    profile_stats: dict, column_profile_df: pd.DataFrame, ui_lang: str = "en"
+) -> str:
     """
     3-4 sentence business-facing summary of the dataset: size, shape, and
     anything notable about data quality. Grounded only in the numbers passed in.
@@ -55,14 +69,24 @@ Column profile:
 Write a concise 3-4 sentence executive summary of this dataset for a business
 audience. Mention data size, general shape, and anything notable about data
 quality (missingness, duplicates, low-variance columns). Use ONLY the numbers
-given above — never invent figures."""
-    return _ask("You are a data analyst writing a summary for business stakeholders.", prompt)
+given above — never invent figures.{_language_instruction(ui_lang)}"""
+    result = _ask(
+    "You are a data analyst writing a summary for business stakeholders.",
+    prompt,
+    )
+
+    return (
+    translate_products_in_text(result)
+    if ui_lang == "ur"
+    else result
+    )
 
 
 def generate_recommendations(
     profile_stats: dict,
     anomaly_summary_df: pd.DataFrame,
     chat_history: list,
+    ui_lang: str = "en",
 ) -> str:
     """
     3-5 bullet-point recommendations based on data quality stats, detected
@@ -90,21 +114,36 @@ Questions already explored by the user:
 Write 3-5 concise, actionable recommendations for someone working with this
 dataset. Base them only on the information above — data quality issues worth
 fixing, columns worth investigating further, or natural next questions to ask.
-Format as a markdown bullet list."""
-    return _ask("You are a senior data analyst giving practical next steps.", prompt)
+Format as a markdown bullet list.{_language_instruction(ui_lang)}"""
+    result = _ask(
+    "You are a senior data analyst giving practical next steps.",
+    prompt,
+    )
+
+    return (
+    translate_products_in_text(result)
+    if ui_lang == "ur"
+    else result
+    )
 
 
-def explain_anomalies(anomaly_summary_df: pd.DataFrame, method: str) -> str:
+def explain_anomalies(anomaly_summary_df: pd.DataFrame, method: str, ui_lang: str = "en") -> str:
     """
     Plain-English explanation of what the flagged anomalies might mean and
     what to check next. One combined call across all flagged columns.
     """
     if anomaly_summary_df is None or anomaly_summary_df.empty:
-        return "No anomalies were detected with the current settings."
+        return (
+            "اس وقت کوئی بےقاعدگی نہیں ملی۔" if ui_lang == "ur"
+            else "No anomalies were detected with the current settings."
+        )
 
     flagged = anomaly_summary_df[anomaly_summary_df["anomaly_count"] > 0]
     if flagged.empty:
-        return "No anomalies were detected with the current settings."
+        return (
+            "اس وقت کوئی بےقاعدگی نہیں ملی۔" if ui_lang == "ur"
+            else "No anomalies were detected with the current settings."
+        )
 
     prompt = f"""Anomaly detection method used: {method}
 
@@ -115,5 +154,14 @@ In plain English, explain what these flagged anomalies likely mean for
 someone exploring this dataset, and suggest 2-3 concrete things to check
 next for the column(s) with the most anomalies. Do not invent details about
 the data beyond what's shown above — speak in general terms about what this
-pattern of outliers could indicate."""
-    return _ask("You explain statistical anomaly results in plain English.", prompt)
+pattern of outliers could indicate.{_language_instruction(ui_lang)}"""
+    result = _ask(
+    "You explain statistical anomaly results in plain English.",
+    prompt,
+    )
+
+    return (
+    translate_products_in_text(result)
+    if ui_lang == "ur"
+    else result
+    )
