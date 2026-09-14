@@ -578,6 +578,7 @@ BazaarPilot demonstrates how lightweight Generative AI and agentic AI infrastruc
 ![BazaarPilot Dashboard](docs/screenshots/dashboard.png)
 
 ![BazaarPilot Dashboard Charts](docs/screenshots/dashboard_charts.png)
+![BazaarPilot Dashboard Charts](docs/screenshots/dashboard_re.png)
 
 ### Urdu Version
 
