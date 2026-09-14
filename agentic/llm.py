@@ -23,7 +23,7 @@ def get_llm():
     if not key:
         return None
     return ChatGroq(
-        model=_secret("GROQ_MODEL") or "llama-3.1-8b-instant",
+        model=_secret("GROQ_MODEL") or "openai/gpt-oss-20b",
         temperature=0,
         api_key=key,
     )
